@@ -1,7 +1,6 @@
 import socket
 import sys
 import json
-#from threading import Thread
 import re
 import random
 
@@ -13,14 +12,14 @@ class Inscription :
 
 
     def transfo(self, file):
-        data = json.dumps(file).encode()
+        data = json.dumps(file).encode('utf_8')
         return data
     
     def inscri(self):
         sock = socket.socket() #socket.AF_INET, socket.SOCK_STREAM
         try:
             sock.connect(self.servAdd)
-            sock.send(bytes(self.transfo(self.inscription),'utf_8'))
+            sock.send(self.transfo(self.inscription))
             received = sock.recv(100000)
         finally:
             sock.close()
@@ -36,32 +35,33 @@ class Inscription :
         s.listen(100000)    
         print ("socket is listening")           
 
+class Game:
+
     def resp_state(self):
-        t = demande
-        z = str(t)
-        pattern = r'(?:"tile":)'
-        p = re.compile(pattern)
-        res = p.search(z)
-        g = res.start()
-        gs = g+8
-        ge = gs + 60
-        tuile = z[3111:3171]
+        print('resp_state')
+        z = str(t)                
+        tuile = re.search('tile": (.+?), "target', z).group(1)
+        print(tuile)
         tile = json.loads(tuile)
-        return tuile
+        return tile
         
     
     def move_played(self):
+        print('move_played')
         gates = ['A','B','C','D','E','F','G','H','I','J','K','L']
-        the_move_played = {"tile": self.resp_state(), "gate": gates[random.randint(0,len(gates)-1)] , "new_position": None}
+        letter = gates[random.randint(0,len(gates)-1)]
+        the_move_played = {"tile": self.resp_state(), "gate": letter , "new_position": 0}   
         return the_move_played
 
     def resp_move(self):
-        move = self.transfo({"response": "move", "move": self.move_played, "message": "Fun message"})
+        print('resp_move')
+        move = i.transfo({"response": "move", "move": self.move_played(), "message": "I played"})
         return move
 
         
-
+                                                         
 i = Inscription()
+g = Game()
 i.inscri()
 
 s = socket.socket()      
@@ -74,11 +74,12 @@ while True:
     print ('Got connection from', addr )
     demande = c.recv(200000) #nbr de caractère recu
     if demande == b'{"request": "ping"}':
-        c.send(bytes(i.pong(),'utf_8'))
+        c.send(i.pong())
         print('pong')
     else:
+        t = demande
         print('else')
-        c.send(bytes(i.resp_move(),'utf_8'))
+        c.send(g.resp_move())
            
         
 c.close()
