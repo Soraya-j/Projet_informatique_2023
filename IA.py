@@ -28,12 +28,19 @@ dico_num_tuile = {
     'S': [43,44,45,46,47,48],
     'W': [7,14,21,28,35,42],
     'R': [8,9,10,11,12,15,16,17,18,19,22,23,24,25,26,29,30,31,32,33,36,37,38,39,40]
-}
+}Gates = {
+    "V1" : [1, 8, 15, 22 , 29, 36, 43],
+    "V2" : [3, 10, 17, 24, 31, 38, 45],
+    "V3" : [5, 12, 19, 26, 33, 40, 47],
+    "H1" : [7, 8, 9, 10, 11, 12, 13],
+    "H2" : [21, 22, 23, 24, 25, 26, 27],
+    "H3" : [35, 36, 37, 38, 39, 40, 41]
+        }
 class Inscription :
     def __init__(self):
         self.servAdd = ('localhost',3000)
-        self.inscription = {"request": "subscribe", "port": 4888, "name": "sosoj_test", "matricules": ["221255"]}
-        self.port = 4888
+        self.inscription = {"request": "subscribe", "port": 8888, "name": "sosoj", "matricules": ["21255"]}
+        self.port = 8888
     def transfo(self, file):
         data = json.dumps(file).encode('utf_8')
         return data
@@ -53,8 +60,32 @@ class Game:
         move = i.transfo({"response": "move", "move": self.move_played(), "message": "I played"})
         print('à répondu au move')
         return move
+    def prob_gates(self):
+        gates = []
+        for elem in Gates :
+            if self.actual_pos() not in Gates[elem]: 
+                if self.new_pos() not in Gates[elem]:
+                    if elem == 'V1':
+                        gates.append('A')
+                        gates.append('I')
+                    if elem == 'V2':
+                        gates.append('B')
+                        gates.append('H')
+                    if elem == 'V3':
+                        gates.append('C')
+                        gates.append('G')
+                    if elem == 'H1':
+                        gates.append('L')
+                        gates.append('D')
+                    if elem == 'H2':
+                        gates.append('K')
+                        gates.append('E')
+                    if elem == 'H3':
+                        gates.append('F')
+                        gates.append('J')
+        return gates
     def move_played(self):
-        gates = ['A','B','C','D','E','F','G','H','I','J','K','L']
+        gates = self.prob_gates()
         letter = gates[random.randint(0,len(gates)-1)]
         the_move_played = {"tile": self.free_tile(), "gate": letter , "new_position": self.new_pos()}   
         return the_move_played
@@ -152,7 +183,22 @@ class Game:
             for elem in cardinal :
                 new_tile[elem] = all([board[act_pos][elem],board[act_pos + direction[elem]['inc']][direction[elem]['opposite']]])
             return new_tile
-            
+    def my_target(self):
+        target = receipt['state']['target']
+        print('my target :')
+        print(target)
+        i = 0
+        board = receipt['state']['board']
+        print('len_board : ',len(board))
+        while i < len(board) - 1 :
+            i += 1
+            print('item des tuiles : ', receipt['state']['board'][i]['item'])
+            if receipt['state']['board'][i]['item'] == target :
+                print('numéro de tuile de ma target')
+                pos_tuile_target = i
+                print('pos_tuile_target : ', pos_tuile_target)
+                break 
+
 
 i = Inscription()
 g = Game()
