@@ -192,12 +192,12 @@ class Game:
         print('len_board : ',len(board))
         while i < len(board) - 1 :
             i += 1
-            print('item des tuiles : ', receipt['state']['board'][i]['item'])
             if receipt['state']['board'][i]['item'] == target :
-                print('numéro de tuile de ma target')
                 pos_tuile_target = i
+                print('my pos : ', self.actual_pos())
                 print('pos_tuile_target : ', pos_tuile_target)
                 break 
+                return pos_tuile_target
 
 
 i = Inscription()
