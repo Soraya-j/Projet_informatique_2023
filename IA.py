@@ -110,7 +110,7 @@ class Game:
         gates = self.prob_gates()
         letter = gates[random.randint(0,len(gates)-1)]
         print('letter : ',letter)
-        the_move_played = {"tile": self.free_tile(), "gate": letter , "new_position": self.new_pos()}   
+        the_move_played = {"tile": self.free_tile(), "gate": letter , "new_position": self.new_pos()} #self.BFS(list_of_coord[self.actual_pos()], self.my_target())  
         return the_move_played
     def free_tile(self):              
         tile = receipt['state']['tile']
@@ -118,8 +118,8 @@ class Game:
         print(tile)
         return tile
     def new_pos(self):
-        print('fonction bfs:::')
-        self.BFS(list_of_coord[self.actual_pos()], self.my_target())    
+        #print('fonction bfs:::')
+        #self.BFS(list_of_coord[self.actual_pos()], self.my_target())    
         print('test tile : ', self.new_tile(self.actual_pos()))
         path = self.path(self.new_tile(self.actual_pos()))
         if path == []:
@@ -140,9 +140,9 @@ class Game:
         actual = current_pos[int(current)]
         return actual
     def path(self, tile):
-        #tile = self.new_tile(self.actual_pos())
-        # print('test tile :')
-        # print(tile)
+        tile = self.new_tile(self.actual_pos())
+        #print('test tile :')
+        #print(tile)
         cardinal = ['N', 'E', 'S', 'W']
         path = []
         for elem in cardinal:
@@ -240,10 +240,18 @@ class Game:
             node = None
 
         res = []
-        while node is not None:
-            res.append(node)
-            node = parent[node]
-        print('liste du chemin : ',list(reversed(res)))
+        for elem in parent :
+                node = parent[elem]
+                if node is not None:
+                    res.append(elem)
+        print('liste du chemin : ',(res))
+        if res != []:
+            len_res = len(res)
+            print(res[len_res -1])
+            print('résultat : ', coord[res[len_res-1]])
+            return coord[res[len_res-1]]
+        else :
+            return self.actual_pos()
 
     def successors(self, node):
         directions = [direction['N']['coords'], direction['E']['coords'], direction['S']['coords'], direction['W']['coords']]
@@ -256,13 +264,17 @@ class Game:
             try :
                 match_tuile = coord[(nx,ny)]
                 dir = direction[(dx,dy)]['name']
-                if board[match_tuile][dir] and board[match_tuile + direction[dir]['inc']][direction[dir]['opposite']]:                   
+                try :
+                    if board[match_tuile][dir] and board[match_tuile + direction[dir]['inc']][direction[dir]['opposite']]:                   
                         res.append((nx, ny))
+                except IndexError :
+                    dx = None
+                    dy = None
             except KeyError:
                 print('error_out of the board : ',(nx,ny))
                 dx = None
                 dy = None
-        print('res : ',res)
+        print('passage: ',res)
         return res
     
 
