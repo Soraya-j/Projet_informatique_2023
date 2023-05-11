@@ -19,7 +19,6 @@ coord = {
     (6,0):42, (6,1):43, (6,2):44, (6,3):45, (6,4):46, (6,5):47, (6,6):48,   
 }
 list_of_coord = list(coord.keys())
-#print(len(list_of_coord))
 direction = {
     "N": {"coords": (0, -1), "inc": -7, "opposite": "S"},
     "S": {"coords": (0, 1), "inc": 7, "opposite": "N"},
@@ -228,18 +227,22 @@ class Game:
     def BFS(self,start, pos_target):
         q = Queue()
         q.enqueue(start)
+        parent = {}
+        parent[start] = None
         while not q.isEmpty():
             node = q.dequeue()
             if node in pos_target:
                 print("J'AI TROUVÉ UN TRÉSOR")
             for elem in self.successors(node):
+                if elem not in parent:
+                    parent[elem] = node
                     q.enqueue(elem)
             node = None
 
         res = []
         while node is not None:
             res.append(node)
-            print('liste du chemin : ',list(reversed(res)))
+            node = parent[node]
         print('liste du chemin : ',list(reversed(res)))
 
     def successors(self, node):
